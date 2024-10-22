@@ -17,7 +17,7 @@ public class BotConsumer implements LongPollingSingleThreadUpdateConsumer {
     public BotConsumer(String TELEGRAM_TOKEN) throws MqttException {
         telegramClient = new OkHttpTelegramClient(TELEGRAM_TOKEN);
         mqttHandler = new MqttHandler(MQTT_BROKER, MqttClient.generateClientId());
-        mqttHandler.subscribe("home/#", this::handleMessage); // Suscribirse a todos los topics de la casa
+        mqttHandler.subscribe("homer/#", this::handleMessage); // Suscribirse a todos los topics de la casa
     }
 
     private void handleMessage(String topic, MqttMessage message) throws TelegramApiException {
