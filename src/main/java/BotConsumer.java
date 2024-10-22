@@ -86,7 +86,6 @@ public class BotConsumer implements LongPollingSingleThreadUpdateConsumer {
                 default:
                     System.out.println("No contemplada");
             }
-            ;
 
             try {
                 mqttHandler.publish(topic, message);
