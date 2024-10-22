@@ -17,7 +17,7 @@ public class BotConsumer implements LongPollingSingleThreadUpdateConsumer {
     public BotConsumer(String TELEGRAM_TOKEN) throws MqttException {
         telegramClient = new OkHttpTelegramClient(TELEGRAM_TOKEN);
         mqttHandler = new MqttHandler(MQTT_BROKER, MqttClient.generateClientId());
-        mqttHandler.subscribe("homer/#", this::handleMessage); // Suscribirse a todos los topics de la casa
+        mqttHandler.subscribe("home/#", this::handleMessage); // Suscribirse a todos los topics de la casa
     }
 
     private void handleMessage(String topic, MqttMessage message) throws TelegramApiException {
@@ -41,51 +41,55 @@ public class BotConsumer implements LongPollingSingleThreadUpdateConsumer {
 
             String res = messageText.substring(indexSlash + 1, indexAt);
 
-            topic ="home/entrance";
+            topic = "home/entrance";
 
-            switch (res){
+            switch (res) {
+                case "status":
+                    topic = "home";
+                    break;
                 case "lamp1on":
                 case "lamp1off":
-                    topic ="home/room1/lamp";
+                    topic = "home/room1/lamp";
                     break;
                 case "lamp2on":
                 case "lamp2off":
-                    topic ="home/room2/lamp";
+                    topic = "home/room2/lamp";
                     break;
                 case "kitchenlampon":
                 case "kitchenlampoff":
-                    topic ="home/kitchen/lamp";
+                    topic = "home/kitchen/lamp";
                     break;
                 case "livnroomlampon":
                 case "livnroomlampoff":
-                    topic ="home/livingroom/lamp";
+                    topic = "home/livingroom/lamp";
                     break;
                 case "foyerlampon":
                 case "foyerlampoff":
-                    topic ="home/foyer/lamp";
+                    topic = "home/foyer/lamp";
                     break;
                 case "bathlampon":
                 case "bathlampoff":
-                    topic ="home/bathroom/lamp";
+                    topic = "home/bathroom/lamp";
                     break;
                 case "bathhumiditysensor":
-                    topic ="home/bathroom/humidity";
+                    topic = "home/bathroom/humidity";
                     break;
                 case "livtempsensor":
-                    topic ="home/livingroom/temperature";
+                    topic = "home/livingroom/temperature";
                     break;
                 case "kitsmokesensor":
-                    topic ="home/kitchen/smoke";
+                    topic = "home/kitchen/smoke";
                     break;
                 case "foyerentrance":
-                    topic ="home/foyer/entrance";
+                    topic = "home/foyer/entrance";
                     break;
                 default:
                     System.out.println("No contemplada");
-            };
+            }
+            ;
 
             try {
-                mqttHandler.publish(topic,message);
+                mqttHandler.publish(topic, message);
             } catch (MqttException e) {
                 throw new RuntimeException(e);
             }
