@@ -17,7 +17,7 @@ public class BotConsumer implements LongPollingSingleThreadUpdateConsumer {
     public BotConsumer(String TELEGRAM_TOKEN) throws MqttException {
         telegramClient = new OkHttpTelegramClient(TELEGRAM_TOKEN);
         mqttHandler = new MqttHandler(MQTT_BROKER, MqttClient.generateClientId());
-        mqttHandler.subscribe("homer/#", this::handleMessage); // Suscribirse a todos los topics de la casa
+        mqttHandler.subscribe("home/#", this::handleMessage); // Suscribirse a todos los topics de la casa
     }
 
     private void handleMessage(String topic, MqttMessage message) throws TelegramApiException {
@@ -42,45 +42,94 @@ public class BotConsumer implements LongPollingSingleThreadUpdateConsumer {
             String res = messageText.substring(indexSlash + 1, indexAt);
 
             topic = "home/entrance";
+            int qos = 0;
 
             switch (res) {
                 case "status":
                     topic = "home";
                     break;
                 case "lamp1on":
+                    message.setPayload("ON".getBytes());
+                    topic = "home/room1/lamp";
+                    break;
                 case "lamp1off":
+                    message.setPayload("OFF".getBytes());
                     topic = "home/room1/lamp";
                     break;
                 case "lamp2on":
+                    message.setPayload("ON".getBytes());
+                    topic = "home/room2/lamp";
+                    break;
                 case "lamp2off":
+                    message.setPayload("OFF".getBytes());
                     topic = "home/room2/lamp";
                     break;
                 case "kitchenlampon":
+                    message.setPayload("ON".getBytes());
+                    topic = "home/kitchen/lamp";
+                    break;
                 case "kitchenlampoff":
+                    message.setPayload("OFF".getBytes());
                     topic = "home/kitchen/lamp";
                     break;
                 case "livnroomlampon":
+                    message.setPayload("ON".getBytes());
+                    topic = "home/livingroom/lamp";
+                    break;
                 case "livnroomlampoff":
+                    message.setPayload("OFF".getBytes());
                     topic = "home/livingroom/lamp";
                     break;
                 case "foyerlampon":
+                    message.setPayload("ON".getBytes());
+                    topic = "home/foyer/lamp";
+                    break;
                 case "foyerlampoff":
+                    message.setPayload("OFF".getBytes());
                     topic = "home/foyer/lamp";
                     break;
                 case "bathlampon":
+                    message.setPayload("ON".getBytes());
+                    topic = "home/bathroom/lamp";
+                    break;
                 case "bathlampoff":
+                    message.setPayload("OFF".getBytes());
                     topic = "home/bathroom/lamp";
                     break;
                 case "bathhumiditysensor":
+                    message.setPayload("ON".getBytes());
+                    topic = "home/bathroom/humidity";
+                    break;
+                case "bathhumiditysensoroff":
+                    message.setPayload("OFF".getBytes());
                     topic = "home/bathroom/humidity";
                     break;
                 case "livtempsensor":
+                    message.setPayload("ON".getBytes());
                     topic = "home/livingroom/temperature";
                     break;
-                case "kitsmokesensor":
+                case "livtempsensoroff":
+                    message.setPayload("OFF".getBytes());
+                    topic = "home/livingroom/temperature";
+                    break;
+                case "kitsmoksensor":
+                    qos = 1;
+                    message.setPayload("ON".getBytes());
+                    topic = "home/kitchen/smoke";
+                    break;
+                case "kitsmoksensoroff":
+                    qos = 1;
+                    message.setPayload("OFF".getBytes());
                     topic = "home/kitchen/smoke";
                     break;
                 case "foyerentrance":
+                    qos = 1;
+                    message.setPayload("ON".getBytes());
+                    topic = "home/foyer/entrance";
+                    break;
+                case "foyerentranceoff":
+                    qos = 1;
+                    message.setPayload("OFF".getBytes());
                     topic = "home/foyer/entrance";
                     break;
                 default:
@@ -88,7 +137,7 @@ public class BotConsumer implements LongPollingSingleThreadUpdateConsumer {
             }
 
             try {
-                mqttHandler.publish(topic, message);
+                mqttHandler.publish(topic, message, qos);
             } catch (MqttException e) {
                 throw new RuntimeException(e);
             }

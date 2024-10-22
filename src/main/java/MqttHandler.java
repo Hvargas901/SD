@@ -12,8 +12,8 @@ public class MqttHandler {
         mqttClient.subscribe(topic, (t, msg) -> messageListener.messageArrived(t, msg));
     }
 
-    public void publish(String topic, MqttMessage message) throws MqttException {
-        mqttClient.publish(topic, message);
+    public void publish(String topic, MqttMessage message, int qos) throws MqttException {
+        mqttClient.publish(topic, message.getPayload(), qos, false);
     }
 
     public void disconnect() throws MqttException {
